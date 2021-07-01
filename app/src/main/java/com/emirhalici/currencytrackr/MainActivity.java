@@ -2,6 +2,7 @@ package com.emirhalici.currencytrackr;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -41,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
         TextView tv_btc = findViewById(R.id.tv_btcprice);
         TextView tv_eth = findViewById(R.id.tv_ethprice);
         TextView tv_doge = findViewById(R.id.tv_dogeprice);
+        SwipeRefreshLayout refreshLayout = findViewById(R.id.swiperefresh);
 
         tv_usd.setText(getString(R.string.priceText, sharedPref.getFloat("usd", -1)));
         tv_eur.setText(getString(R.string.priceText, sharedPref.getFloat("eur", -1)));
@@ -59,7 +61,17 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-
+        refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                try {
+                    refreshAllValues(tv_usd, tv_eur, tv_gbp, tv_btc, tv_eth, tv_doge);
+                } catch (IOException | JSONException e) {
+                    e.printStackTrace();
+                }
+                refreshLayout.setRefreshing(false);
+            }
+        });
 
     }
 
@@ -111,6 +123,5 @@ public class MainActivity extends AppCompatActivity {
         editor.putFloat("dogeTRY", dogePriceTRY);
 
         editor.apply();
-
     }
 }
