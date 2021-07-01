@@ -1,0 +1,318 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/tv_greeting"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:fontFamily="@font/source_sans_pro_bold"
+            android:text="Good afternoon, have a wonderful evening!"
+            android:textColor="@color/amber_700"
+            android:textSize="34sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_exchangeRates"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:fontFamily="@font/source_sans_pro"
+            android:text="Exchange Rates"
+            android:textColor="@color/light_gray"
+            android:textSize="20sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_greeting" />
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cv_exchange"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            app:cardCornerRadius="30dp"
+            app:cardElevation="30dp"
+            app:layout_constraintEnd_toEndOf="@+id/tv_greeting"
+            app:layout_constraintStart_toStartOf="@+id/tv_greeting"
+            app:layout_constraintTop_toBottomOf="@+id/tv_exchangeRates">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="24dp">
+
+                <TextView
+                    android:id="@+id/tv_usd"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_marginEnd="8dp"
+                    android:fontFamily="@font/source_sans_pro_light"
+                    android:text="American Dollar (USD)"
+                    app:autoSizeTextType="uniform"
+                    app:layout_constraintBottom_toBottomOf="@+id/tv_usdprice"
+                    app:layout_constraintEnd_toStartOf="@+id/tv_usdprice"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/tv_usdprice" />
+
+                <TextView
+                    android:id="@+id/tv_usdprice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/source_sans_pro_bold"
+                    android:text="8.55 ₺"
+                    android:textColor="@color/white"
+                    android:textSize="28sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <View
+                    android:id="@+id/divider_3"
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="16dp"
+                    android:background="?android:attr/listDivider"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_usd" />
+
+                <View
+                    android:id="@+id/divider_4"
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="16dp"
+                    android:background="?android:attr/listDivider"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_euro" />
+
+                <TextView
+                    android:id="@+id/tv_euro"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_marginEnd="8dp"
+                    android:fontFamily="@font/source_sans_pro_light"
+                    android:text="Euro (EUR)"
+                    app:autoSizeTextType="uniform"
+                    app:layout_constraintBottom_toBottomOf="@+id/tv_europrice"
+                    app:layout_constraintEnd_toStartOf="@+id/tv_europrice"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/tv_europrice" />
+
+                <TextView
+                    android:id="@+id/tv_pound"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_marginEnd="8dp"
+                    android:fontFamily="@font/source_sans_pro_light"
+                    android:text="English Pound (GBP)"
+                    android:textSize="28sp"
+                    app:layout_constraintBottom_toBottomOf="@+id/tv_poundprice"
+                    app:layout_constraintEnd_toStartOf="@+id/tv_poundprice"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/tv_poundprice" />
+
+                <TextView
+                    android:id="@+id/tv_europrice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:fontFamily="@font/source_sans_pro_bold"
+                    android:text="10.25 ₺"
+                    android:textColor="@color/white"
+                    android:textSize="28sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/divider_3" />
+
+                <TextView
+                    android:id="@+id/tv_poundprice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:fontFamily="@font/source_sans_pro_bold"
+                    android:text="11.92 ₺"
+                    android:textColor="@color/white"
+                    android:textSize="28sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/divider_4" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.cardview.widget.CardView>
+
+        <TextView
+            android:id="@+id/tv_cryptoCurrencies"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:fontFamily="@font/source_sans_pro"
+            android:text="Crypto Currencies"
+            android:textColor="@color/light_gray"
+            android:textSize="20sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/cv_exchange" />
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cv_crypto"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
+            app:cardCornerRadius="30dp"
+            app:cardElevation="30dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/cv_exchange"
+            app:layout_constraintStart_toStartOf="@+id/cv_exchange"
+            app:layout_constraintTop_toBottomOf="@+id/tv_cryptoCurrencies">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="24dp">
+
+                <ImageView
+                    android:id="@+id/iv_btc"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:src="@drawable/btc"
+                    app:layout_constraintBottom_toBottomOf="@+id/tv_btcprice"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/tv_btc" />
+
+                <TextView
+                    android:id="@+id/tv_btc"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/source_sans_pro_light"
+                    android:text="Bitcoin (BTC)"
+                    android:textSize="34sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/tv_btcprice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:fontFamily="@font/source_sans_pro_bold"
+                    android:text="32000 $ / 28000 ₺"
+                    android:textColor="@color/white"
+                    android:textSize="28sp"
+                    app:layout_constraintStart_toStartOf="@+id/tv_btc"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_btc" />
+
+                <View
+                    android:id="@+id/divider_1"
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="16dp"
+                    android:background="?android:attr/listDivider"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_btcprice" />
+
+                <View
+                    android:id="@+id/divider_2"
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="16dp"
+                    android:background="?android:attr/listDivider"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_ethprice" />
+
+                <ImageView
+                    android:id="@+id/iv_eth"
+                    android:layout_width="80dp"
+                    android:layout_height="0dp"
+                    android:src="@drawable/eth"
+                    app:layout_constraintBottom_toBottomOf="@+id/tv_ethprice"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/tv_eth" />
+
+                <ImageView
+                    android:id="@+id/iv_doge"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:src="@drawable/doge"
+                    app:layout_constraintBottom_toBottomOf="@+id/tv_ethprice2"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/tv_doge" />
+
+                <TextView
+                    android:id="@+id/tv_eth"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:fontFamily="@font/source_sans_pro_light"
+                    android:text="Ethereum (ETH)"
+                    android:textSize="34sp"
+                    app:layout_constraintStart_toStartOf="@+id/tv_btcprice"
+                    app:layout_constraintTop_toBottomOf="@+id/divider_1" />
+
+                <TextView
+                    android:id="@+id/tv_doge"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:fontFamily="@font/source_sans_pro_light"
+                    android:text="Dogecoin (DOGE)"
+                    android:textSize="34sp"
+                    app:layout_constraintStart_toStartOf="@+id/tv_ethprice"
+                    app:layout_constraintTop_toBottomOf="@+id/divider_2" />
+
+                <TextView
+                    android:id="@+id/tv_ethprice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:fontFamily="@font/source_sans_pro_bold"
+                    android:text="2090 $ / 18190 ₺"
+                    android:textColor="@color/white"
+                    android:textSize="28sp"
+                    app:layout_constraintStart_toStartOf="@+id/tv_eth"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_eth" />
+
+                <TextView
+                    android:id="@+id/tv_ethprice2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:fontFamily="@font/source_sans_pro_bold"
+                    android:text="0.2465 $ / 2.1452 ₺"
+                    android:textColor="@color/white"
+                    android:textSize="28sp"
+                    app:layout_constraintStart_toStartOf="@+id/tv_doge"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_doge" />
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.cardview.widget.CardView>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</ScrollView>
