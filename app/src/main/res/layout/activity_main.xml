@@ -81,7 +81,7 @@
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/source_sans_pro_bold"
                         android:text="8.55 ₺"
-                        android:textColor="@color/white"
+                        android:textColor="?attr/colorOnSecondary"
                         android:textSize="28sp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
@@ -143,7 +143,7 @@
                         android:layout_marginTop="8dp"
                         android:fontFamily="@font/source_sans_pro_bold"
                         android:text="10.25 ₺"
-                        android:textColor="@color/white"
+                        android:textColor="?attr/colorOnSecondary"
                         android:textSize="28sp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/divider_3" />
@@ -155,7 +155,7 @@
                         android:layout_marginTop="8dp"
                         android:fontFamily="@font/source_sans_pro_bold"
                         android:text="11.92 ₺"
-                        android:textColor="@color/white"
+                        android:textColor="?attr/colorOnSecondary"
                         android:textSize="28sp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/divider_4" />
@@ -219,7 +219,7 @@
                         android:layout_marginTop="8dp"
                         android:fontFamily="@font/source_sans_pro_bold"
                         android:text="32000 $ / 28000 ₺"
-                        android:textColor="@color/white"
+                        android:textColor="?attr/colorOnSecondary"
                         android:textSize="28sp"
                         app:layout_constraintStart_toStartOf="@+id/tv_btc"
                         app:layout_constraintTop_toBottomOf="@+id/tv_btc" />
@@ -295,7 +295,7 @@
                         android:layout_marginTop="8dp"
                         android:fontFamily="@font/source_sans_pro_bold"
                         android:text="2090 $ / 18190 ₺"
-                        android:textColor="@color/white"
+                        android:textColor="?attr/colorOnSecondary"
                         android:textSize="28sp"
                         app:layout_constraintStart_toStartOf="@+id/tv_eth"
                         app:layout_constraintTop_toBottomOf="@+id/tv_eth" />
@@ -307,7 +307,7 @@
                         android:layout_marginTop="8dp"
                         android:fontFamily="@font/source_sans_pro_bold"
                         android:text="0.2465 $ / 2.1452 ₺"
-                        android:textColor="@color/white"
+                        android:textColor="?attr/colorOnSecondary"
                         android:textSize="28sp"
                         app:layout_constraintStart_toStartOf="@+id/tv_doge"
                         app:layout_constraintTop_toBottomOf="@+id/tv_doge" />

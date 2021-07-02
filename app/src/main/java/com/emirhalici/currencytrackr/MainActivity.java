@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+        //AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
 
         // hotfix for android.os.NetworkOnMainThreadException
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
@@ -64,12 +64,15 @@ public class MainActivity extends AppCompatActivity {
         refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+                refresherThread thread = new refresherThread();
+                thread.start();
                 try {
-                    refreshAllValues(tv_usd, tv_eur, tv_gbp, tv_btc, tv_eth, tv_doge);
-                } catch (IOException | JSONException e) {
+                    refreshAllValuesFromPreferences(tv_usd, tv_eur, tv_gbp, tv_btc, tv_eth, tv_doge, refreshLayout);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                refreshLayout.setRefreshing(false);
             }
         });
 
@@ -82,6 +85,16 @@ public class MainActivity extends AppCompatActivity {
         return bd.floatValue();
     }
 
+    void refreshAllValuesFromPreferences(TextView usd, TextView eur, TextView gbp, TextView btc, TextView eth, TextView doge, SwipeRefreshLayout refreshLayout) throws IOException, JSONException {
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        usd.setText(getString(R.string.priceText, sharedPref.getFloat("usd", -1)));
+        eur.setText(getString(R.string.priceText, sharedPref.getFloat("eur", -1)));
+        gbp.setText(getString(R.string.priceText, sharedPref.getFloat("gbp", -1)));
+        btc.setText(getString(R.string.cryptoPriceText, sharedPref.getFloat("btcUSD", -1), sharedPref.getFloat("btcTRY", -1)));
+        eth.setText(getString(R.string.cryptoPriceText, sharedPref.getFloat("ethUSD", -1), sharedPref.getFloat("ethTRY", -1)));
+        doge.setText(getString(R.string.cryptoPriceText, sharedPref.getFloat("dogeUSD", -1), sharedPref.getFloat("dogeTRY", -1)));
+        refreshLayout.setRefreshing(false);
+    }
 
     void refreshAllValues(TextView usd, TextView eur, TextView gbp, TextView btc, TextView eth, TextView doge) throws IOException, JSONException {
 
@@ -121,7 +134,52 @@ public class MainActivity extends AppCompatActivity {
         editor.putFloat("btcTRY", btcPriceTRY);
         editor.putFloat("ethTRY", ethPriceTRY);
         editor.putFloat("dogeTRY", dogePriceTRY);
-
         editor.apply();
     }
+
+    void refreshAllPreferenceValues() throws IOException, JSONException {
+        int decimalNr = 2;
+        double busdtry = ApiHelper.getPriceBySymbolInDouble("BUSDTRY");
+        double eurusdt = ApiHelper.getPriceBySymbolInDouble("EURUSDT");
+        double gbpusdt = ApiHelper.getPriceBySymbolInDouble("GBPUSDT");
+        double btcusdt = ApiHelper.getPriceBySymbolInDouble("BTCUSDT");
+        double ethusdt = ApiHelper.getPriceBySymbolInDouble("ETHUSDT");
+        double dogeusdt = ApiHelper.getPriceBySymbolInDouble("DOGEUSDT");
+
+        float usdPrice = round(busdtry, decimalNr);
+        float eurPrice = round( (double) busdtry * eurusdt , decimalNr);
+        float gbpPrice = round( (double) busdtry * gbpusdt , decimalNr);
+        float btcPriceUSD = round(btcusdt, decimalNr);
+        float ethPriceUSD = round(ethusdt, decimalNr);
+        float dogePriceUSD = round(dogeusdt, decimalNr);
+        float btcPriceTRY = round((double) btcusdt * busdtry, decimalNr);
+        float ethPriceTRY = round((double) ethusdt * busdtry, decimalNr);
+        float dogePriceTRY = round((double) dogeusdt * busdtry, decimalNr);
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putFloat("usd", usdPrice);
+        editor.putFloat("eur", eurPrice);
+        editor.putFloat("gbp", gbpPrice);
+        editor.putFloat("btcUSD", btcPriceUSD);
+        editor.putFloat("ethUSD", ethPriceUSD);
+        editor.putFloat("dogeUSD", dogePriceUSD);
+        editor.putFloat("btcTRY", btcPriceTRY);
+        editor.putFloat("ethTRY", ethPriceTRY);
+        editor.putFloat("dogeTRY", dogePriceTRY);
+        editor.apply();
+    }
+
+    class refresherThread extends Thread {
+        @Override
+        public void run() {
+            try {
+                refreshAllPreferenceValues();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
 }
