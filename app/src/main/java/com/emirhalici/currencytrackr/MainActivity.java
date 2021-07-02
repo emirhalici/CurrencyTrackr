@@ -51,9 +51,11 @@ public class MainActivity extends AppCompatActivity {
         tv_eth.setText(getString(R.string.cryptoPriceText, sharedPref.getFloat("ethUSD", -1), sharedPref.getFloat("ethTRY", -1)));
         tv_doge.setText(getString(R.string.cryptoPriceText, sharedPref.getFloat("dogeUSD", -1), sharedPref.getFloat("dogeTRY", -1)));
 
-        if (sharedPref.getFloat("gbp", -1)==-1) {
+        if ( (int) sharedPref.getFloat("gbp", -1)==-1) {
+            refresherThread thread = new refresherThread();
+            thread.start();
             try {
-                refreshAllValues(tv_usd, tv_eur, tv_gbp, tv_btc, tv_eth, tv_doge);
+                refreshAllValuesFromPreferences(tv_usd, tv_eur, tv_gbp, tv_btc, tv_eth, tv_doge, refreshLayout);
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (JSONException e) {
