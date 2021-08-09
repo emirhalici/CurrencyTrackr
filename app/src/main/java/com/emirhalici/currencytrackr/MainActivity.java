@@ -19,6 +19,10 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.nio.channels.GatheringByteChannel;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
 import static java.lang.Math.round;
 
@@ -42,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
         TextView tv_btc = findViewById(R.id.tv_btcprice);
         TextView tv_eth = findViewById(R.id.tv_ethprice);
         TextView tv_doge = findViewById(R.id.tv_dogeprice);
+        TextView tv_lastUpdated = findViewById(R.id.tv_lastUpdated);
         SwipeRefreshLayout refreshLayout = findViewById(R.id.swiperefresh);
 
         tv_usd.setText(getString(R.string.priceText, sharedPref.getFloat("usd", -1)));
@@ -50,31 +55,33 @@ public class MainActivity extends AppCompatActivity {
         tv_btc.setText(getString(R.string.cryptoPriceText, sharedPref.getFloat("btcUSD", -1), sharedPref.getFloat("btcTRY", -1)));
         tv_eth.setText(getString(R.string.cryptoPriceText, sharedPref.getFloat("ethUSD", -1), sharedPref.getFloat("ethTRY", -1)));
         tv_doge.setText(getString(R.string.cryptoPriceText, sharedPref.getFloat("dogeUSD", -1), sharedPref.getFloat("dogeTRY", -1)));
-
+        tv_lastUpdated.setText(getString(R.string.lastUpdated, sharedPref.getString("lastUpdate", "unknown")));
         if ( (int) sharedPref.getFloat("gbp", -1)==-1) {
             refresherThread thread = new refresherThread();
             thread.start();
             try {
-                refreshAllValuesFromPreferences(tv_usd, tv_eur, tv_gbp, tv_btc, tv_eth, tv_doge, refreshLayout);
+                refreshAllValuesFromPreferences(tv_usd, tv_eur, tv_gbp, tv_btc, tv_eth, tv_doge, tv_lastUpdated, refreshLayout);
             } catch (IOException e) {
                 e.printStackTrace();
+                Log.e("onCreate", "io exception: error while refreshAllValuesFromPreferences");
             } catch (JSONException e) {
                 e.printStackTrace();
+                Log.e("onCreate", "json exception: error while refreshAllValuesFromPreferences");
+
             }
         }
 
-        refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                refresherThread thread = new refresherThread();
-                thread.start();
-                try {
-                    refreshAllValuesFromPreferences(tv_usd, tv_eur, tv_gbp, tv_btc, tv_eth, tv_doge, refreshLayout);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+        refreshLayout.setOnRefreshListener(() -> {
+            refresherThread thread = new refresherThread();
+            thread.start();
+            try {
+                refreshAllValuesFromPreferences(tv_usd, tv_eur, tv_gbp, tv_btc, tv_eth, tv_doge, tv_lastUpdated, refreshLayout);
+            } catch (IOException e) {
+                e.printStackTrace();
+                Log.e("refreshLayout", "io exception: error while refreshAllValuesFromPreferences");
+            } catch (JSONException e) {
+                e.printStackTrace();
+                Log.e("refreshLayout", "json exception: error while refreshAllValuesFromPreferences");
             }
         });
 
@@ -87,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
         return bd.floatValue();
     }
 
-    void refreshAllValuesFromPreferences(TextView usd, TextView eur, TextView gbp, TextView btc, TextView eth, TextView doge, SwipeRefreshLayout refreshLayout) throws IOException, JSONException {
+    void refreshAllValuesFromPreferences(TextView usd, TextView eur, TextView gbp, TextView btc, TextView eth, TextView doge, TextView tv_lastUpdated, SwipeRefreshLayout refreshLayout) throws IOException, JSONException {
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         usd.setText(getString(R.string.priceText, sharedPref.getFloat("usd", -1)));
         eur.setText(getString(R.string.priceText, sharedPref.getFloat("eur", -1)));
@@ -95,6 +102,7 @@ public class MainActivity extends AppCompatActivity {
         btc.setText(getString(R.string.cryptoPriceText, sharedPref.getFloat("btcUSD", -1), sharedPref.getFloat("btcTRY", -1)));
         eth.setText(getString(R.string.cryptoPriceText, sharedPref.getFloat("ethUSD", -1), sharedPref.getFloat("ethTRY", -1)));
         doge.setText(getString(R.string.cryptoPriceText, sharedPref.getFloat("dogeUSD", -1), sharedPref.getFloat("dogeTRY", -1)));
+        tv_lastUpdated.setText(getString(R.string.lastUpdated, sharedPref.getString("lastUpdate", "unknown")));
         refreshLayout.setRefreshing(false);
     }
 
@@ -136,7 +144,9 @@ public class MainActivity extends AppCompatActivity {
         editor.putFloat("btcTRY", btcPriceTRY);
         editor.putFloat("ethTRY", ethPriceTRY);
         editor.putFloat("dogeTRY", dogePriceTRY);
+        editor.putString("lastUpdate", getDateTimeString());
         editor.apply();
+
     }
 
     void refreshAllPreferenceValues() throws IOException, JSONException {
@@ -168,7 +178,19 @@ public class MainActivity extends AppCompatActivity {
         editor.putFloat("btcTRY", btcPriceTRY);
         editor.putFloat("ethTRY", ethPriceTRY);
         editor.putFloat("dogeTRY", dogePriceTRY);
+        String dateTime = getDateTimeString();
+        editor.putString("lastUpdate", dateTime);
         editor.apply();
+        Log.e("refreshAllPreferenceValues", dateTime + " method ran and shared preferences updated successfully. ");
+    }
+
+    public String getDateTimeString() {
+        //String date = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.LONG).format(new Date());
+        //Date currentTime = Calendar.getInstance().getTime();
+        String pattern = "dd/MM/yyyy HH:mm:ss";
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
+        String date = simpleDateFormat.format(new Date());
+        return date;
     }
 
     class refresherThread extends Thread {
@@ -176,10 +198,13 @@ public class MainActivity extends AppCompatActivity {
         public void run() {
             try {
                 refreshAllPreferenceValues();
+                Log.e("refresherThread", "thread ran successfuly.");
             } catch (IOException e) {
                 e.printStackTrace();
+                Log.e("refresherThread", "io exception: error while refreshAllPreferenceValues");
             } catch (JSONException e) {
                 e.printStackTrace();
+                Log.e("refresherThread", "json exception exception: error while refreshAllPreferenceValues");
             }
         }
     }

@@ -2,5 +2,6 @@
     <string name="app_name">CurrencyTrackr</string>
     <string name="priceText">%1$.2f ₺</string>
     <string name="cryptoPriceText">%1$.2f $ / %2$.2f ₺</string>
+    <string name="lastUpdated">Last updated: %1$s</string>
     <string name="disclaimer">DISCLAIMER: This application is for educational purposes only. The data is pulled from binance API and it may not represent the true values. Please use this app with caution.</string>
 </resources>
