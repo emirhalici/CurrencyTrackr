@@ -1,5 +1,6 @@
 package com.emirhalici.currencytrackr;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -29,13 +30,13 @@ public class ApiHelper {
         }
     }
 
-    public static JSONObject getAllPrices() throws IOException {
+    public static JSONArray getAllPrices() throws IOException {
         // https://api.binance.com/api/v3/ticker/price
-        JSONObject json = null;
+        JSONArray json = null;
         URL url = new URL("https://api.binance.com/api/v3/ticker/price");
         String response = getResponseFromHttpUrl(url);
         try {
-            json = new JSONObject(response);
+            json = new JSONArray(response);
         } catch (JSONException e) {
             e.printStackTrace();
         }
