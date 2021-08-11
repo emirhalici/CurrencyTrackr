@@ -28,17 +28,16 @@ import static java.lang.Math.round;
 
 public class MainActivity extends AppCompatActivity {
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences sharedPref = getSharedPreferences(getPackageName()+"_preferences", MODE_PRIVATE);
         //AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
 
         // hotfix for android.os.NetworkOnMainThreadException
-        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-        StrictMode.setThreadPolicy(policy);
+        // StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        // StrictMode.setThreadPolicy(policy);
 
         TextView tv_usd = findViewById(R.id.tv_usdprice);
         TextView tv_eur = findViewById(R.id.tv_europrice);
@@ -49,16 +48,19 @@ public class MainActivity extends AppCompatActivity {
         TextView tv_lastUpdated = findViewById(R.id.tv_lastUpdated);
         SwipeRefreshLayout refreshLayout = findViewById(R.id.swiperefresh);
 
-        tv_usd.setText(getString(R.string.priceText, sharedPref.getFloat("usd", -1)));
-        tv_eur.setText(getString(R.string.priceText, sharedPref.getFloat("eur", -1)));
-        tv_gbp.setText(getString(R.string.priceText, sharedPref.getFloat("gbp", -1)));
-        tv_btc.setText(getString(R.string.cryptoPriceText, sharedPref.getFloat("btcUSD", -1), sharedPref.getFloat("btcTRY", -1)));
-        tv_eth.setText(getString(R.string.cryptoPriceText, sharedPref.getFloat("ethUSD", -1), sharedPref.getFloat("ethTRY", -1)));
-        tv_doge.setText(getString(R.string.cryptoPriceText, sharedPref.getFloat("dogeUSD", -1), sharedPref.getFloat("dogeTRY", -1)));
-        tv_lastUpdated.setText(getString(R.string.lastUpdated, sharedPref.getString("lastUpdate", "unknown")));
-        if ( (int) sharedPref.getFloat("gbp", -1)==-1) {
+        try {
+            refreshAllValuesFromPreferences(tv_usd, tv_eur, tv_gbp, tv_btc, tv_eth, tv_doge, tv_lastUpdated, refreshLayout);
+        } catch (IOException | JSONException e) {
+            e.printStackTrace();
+        }
+
+        // checking to see if values are null (default value is -1 hence null)
+        if ((int) sharedPref.getFloat("gbp", -1) == -1) {
+            // if so, this thread is run to update the values using
+            // refreshAllPreferenceValues method
             refresherThread thread = new refresherThread();
             thread.start();
+            // now that all values are hopefully updated, textbox views are updated
             try {
                 refreshAllValuesFromPreferences(tv_usd, tv_eur, tv_gbp, tv_btc, tv_eth, tv_doge, tv_lastUpdated, refreshLayout);
             } catch (IOException e) {
@@ -71,6 +73,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
+        // swipe to refresh motion listener
         refreshLayout.setOnRefreshListener(() -> {
             refresherThread thread = new refresherThread();
             thread.start();
@@ -87,6 +90,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    // returns the double value rounded with given decimal places.
     public static float round(double value, int places) {
         if (places < 0) throw new IllegalArgumentException();
         BigDecimal bd = BigDecimal.valueOf(value);
@@ -94,8 +98,9 @@ public class MainActivity extends AppCompatActivity {
         return bd.floatValue();
     }
 
+    // using the values stored in sharedPreferences, all textviews are updated
     void refreshAllValuesFromPreferences(TextView usd, TextView eur, TextView gbp, TextView btc, TextView eth, TextView doge, TextView tv_lastUpdated, SwipeRefreshLayout refreshLayout) throws IOException, JSONException {
-        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences sharedPref = getSharedPreferences(getPackageName()+"_preferences", MODE_PRIVATE);
         usd.setText(getString(R.string.priceText, sharedPref.getFloat("usd", -1)));
         eur.setText(getString(R.string.priceText, sharedPref.getFloat("eur", -1)));
         gbp.setText(getString(R.string.priceText, sharedPref.getFloat("gbp", -1)));
@@ -118,14 +123,14 @@ public class MainActivity extends AppCompatActivity {
         double dogeusdt = ApiHelper.getPriceBySymbolInDouble("DOGEUSDT");
 
         float usdPrice = round(busdtry, decimalNr);
-        float eurPrice = round( (double) busdtry * eurusdt , decimalNr);
-        float gbpPrice = round( (double) busdtry * gbpusdt , decimalNr);
+        float eurPrice = round( busdtry * eurusdt , decimalNr);
+        float gbpPrice = round( busdtry * gbpusdt , decimalNr);
         float btcPriceUSD = round(btcusdt, decimalNr);
         float ethPriceUSD = round(ethusdt, decimalNr);
         float dogePriceUSD = round(dogeusdt, decimalNr);
-        float btcPriceTRY = round((double) btcusdt * busdtry, decimalNr);
-        float ethPriceTRY = round((double) ethusdt * busdtry, decimalNr);
-        float dogePriceTRY = round((double) dogeusdt * busdtry, decimalNr);
+        float btcPriceTRY = round(btcusdt * busdtry, decimalNr);
+        float ethPriceTRY = round(ethusdt * busdtry, decimalNr);
+        float dogePriceTRY = round(dogeusdt * busdtry, decimalNr);
 
         usd.setText(getString(R.string.priceText, usdPrice));
         eur.setText(getString(R.string.priceText, eurPrice));
@@ -133,7 +138,7 @@ public class MainActivity extends AppCompatActivity {
         btc.setText(getString(R.string.cryptoPriceText, btcPriceUSD, btcPriceTRY));
         eth.setText(getString(R.string.cryptoPriceText, ethPriceUSD, ethPriceTRY));
         doge.setText(getString(R.string.cryptoPriceText, dogePriceUSD, dogePriceTRY));
-        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences sharedPref = getSharedPreferences(getPackageName()+"_preferences", MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putFloat("usd", usdPrice);
         editor.putFloat("eur", eurPrice);
@@ -159,15 +164,15 @@ public class MainActivity extends AppCompatActivity {
         double dogeusdt = ApiHelper.getPriceBySymbolInDouble("DOGEUSDT");
 
         float usdPrice = round(busdtry, decimalNr);
-        float eurPrice = round( (double) busdtry * eurusdt , decimalNr);
-        float gbpPrice = round( (double) busdtry * gbpusdt , decimalNr);
+        float eurPrice = round( busdtry * eurusdt , decimalNr);
+        float gbpPrice = round( busdtry * gbpusdt , decimalNr);
         float btcPriceUSD = round(btcusdt, decimalNr);
         float ethPriceUSD = round(ethusdt, decimalNr);
         float dogePriceUSD = round(dogeusdt, decimalNr);
-        float btcPriceTRY = round((double) btcusdt * busdtry, decimalNr);
-        float ethPriceTRY = round((double) ethusdt * busdtry, decimalNr);
-        float dogePriceTRY = round((double) dogeusdt * busdtry, decimalNr);
-        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        float btcPriceTRY = round(btcusdt * busdtry, decimalNr);
+        float ethPriceTRY = round(ethusdt * busdtry, decimalNr);
+        float dogePriceTRY = round(dogeusdt * busdtry, decimalNr);
+        SharedPreferences sharedPref = getSharedPreferences(getPackageName()+"_preferences", MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putFloat("usd", usdPrice);
         editor.putFloat("eur", eurPrice);
@@ -184,15 +189,14 @@ public class MainActivity extends AppCompatActivity {
         Log.e("refreshAllPreferenceValues", dateTime + " method ran and shared preferences updated successfully. ");
     }
 
+    // returns a simple string containing date and time in format
     public String getDateTimeString() {
-        //String date = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.LONG).format(new Date());
-        //Date currentTime = Calendar.getInstance().getTime();
         String pattern = "dd/MM/yyyy HH:mm:ss";
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
-        String date = simpleDateFormat.format(new Date());
-        return date;
+        return simpleDateFormat.format(new Date());
     }
 
+    // network thread to update currency values from api
     class refresherThread extends Thread {
         @Override
         public void run() {
